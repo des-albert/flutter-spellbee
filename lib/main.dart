@@ -1,14 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-
 void main() {
   runApp(const MyApp());
 }
-
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -43,17 +42,16 @@ class _SpellFormState extends State<SpellForm> {
   String base = "";
   String center = "";
   String loadedData = "";
-
+  String versionText = "";
   late List<String> results = [];
   late List<int> count = [];
 
   bool _resultVisible = false;
 
   Future<void> _loadData() async {
-
     String loadedData = await rootBundle.loadString('assets/words.txt');
-
     List<String> words = ls.convert(loadedData);
+    versionText = await rootBundle.loadString('assets/version.txt');
 
     score = 0;
 
@@ -107,7 +105,7 @@ class _SpellFormState extends State<SpellForm> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              Container(
+              SizedBox(
                 width: 80,
                 height: 30,
                 child: TextField(
@@ -121,14 +119,15 @@ class _SpellFormState extends State<SpellForm> {
                   ),
                   decoration: InputDecoration(
                       hintText: 'center',
-                      hintStyle: const TextStyle(fontSize: 20, color: Colors.blue),
+                      hintStyle:
+                          const TextStyle(fontSize: 20, color: Colors.blue),
                       isDense: true,
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(5.0)),
-                      contentPadding: EdgeInsets.only(bottom: 15)),
+                      contentPadding: const EdgeInsets.only(bottom: 15)),
                 ),
               ),
-              Container(
+              SizedBox(
                 width: 150,
                 height: 30,
                 child: TextField(
@@ -140,13 +139,13 @@ class _SpellFormState extends State<SpellForm> {
                     fontSize: 25,
                     color: Colors.deepOrangeAccent,
                   ),
-
                   decoration: InputDecoration(
                       hintText: 'outer letters',
-                      hintStyle: const TextStyle(fontSize: 20, color: Colors.blue),
+                      hintStyle:
+                          const TextStyle(fontSize: 20, color: Colors.blue),
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(5.0)),
-                      contentPadding: EdgeInsets.only(bottom: 15)),
+                      contentPadding: const EdgeInsets.only(bottom: 15)),
                 ),
               ),
               TextButton(
@@ -243,15 +242,14 @@ class _SpellFormState extends State<SpellForm> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
                 Text(
-                  style: const TextStyle(
-                    fontSize: 20,
-                    color: Colors.green,
-                  ),
-                  '${results.length} words score $score'),
+                    style: const TextStyle(
+                      fontSize: 20,
+                      color: Colors.green,
+                    ),
+                    '${results.length} words score $score'),
               ],
             ),
           ),
-
           Expanded(
             child: SingleChildScrollView(
               child: Column(
@@ -306,6 +304,20 @@ class _SpellFormState extends State<SpellForm> {
                   ),
                 ],
               ),
+            ),
+          ),
+          Visibility(
+            visible: _resultVisible,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                    style: const TextStyle(
+                      fontSize: 10,
+                      color: Colors.blue,
+                    ),
+                    versionText),
+              ],
             ),
           ),
         ],
