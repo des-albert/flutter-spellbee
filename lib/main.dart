@@ -255,7 +255,7 @@ class _SpellFormState extends State<SpellForm> {
                   Text(
                       style: const TextStyle(
                         fontSize: 20,
-                        color: Colors.green,
+                        color: Colors.orange
                       ),
                       '${results.length} words score $score'),
                 ],
