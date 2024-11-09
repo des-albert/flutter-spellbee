@@ -14,10 +14,14 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'SpellBee',
-      home: SpellForm(),
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
+      ),
+      home: const SpellForm(),
     );
   }
 }
@@ -92,234 +96,243 @@ class _SpellFormState extends State<SpellForm> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('DB\'r SpellBee Solver'),
-        backgroundColor: Colors.lightBlueAccent,
+        backgroundColor: Colors.lightBlue.shade600,
         centerTitle: true,
       ),
-      body: Column(
-        children: <Widget>[
-          const Divider(
-            height: 10,
-          ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              SizedBox(
-                width: 80,
-                height: 30,
-                child: TextField(
-                  controller: centerLetter,
-                  textAlign: TextAlign.center,
-                  textAlignVertical: TextAlignVertical.center,
-                  maxLines: 1,
-                  style: const TextStyle(
-                    fontSize: 25,
-                    color: Colors.green,
-                  ),
-                  decoration: InputDecoration(
-                      hintText: 'center',
-                      hintStyle:
-                          const TextStyle(fontSize: 20, color: Colors.blue),
-                      isDense: true,
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5.0)),
-                      contentPadding: const EdgeInsets.only(bottom: 15)),
-                ),
-              ),
-              SizedBox(
-                width: 150,
-                height: 30,
-                child: TextField(
-                  controller: outerLetters,
-                  textAlign: TextAlign.center,
-                  textAlignVertical: TextAlignVertical.center,
-                  maxLines: 1,
-                  style: const TextStyle(
-                    fontSize: 25,
-                    color: Colors.deepOrangeAccent,
-                  ),
-                  decoration: InputDecoration(
-                      hintText: 'outer letters',
-                      hintStyle:
-                          const TextStyle(fontSize: 20, color: Colors.blue),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5.0)),
-                      contentPadding: const EdgeInsets.only(bottom: 15)),
-                ),
-              ),
-              TextButton(
-                style: TextButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  backgroundColor: Colors.blueAccent,
-                ),
-                onPressed: () async {
-                  base = outerLetters.text;
-                  List<int> chars = base.codeUnits;
-                  if (chars.length == 6) {
-                    outer = ~0;
-                    for (int p in chars) {
-                      if (p < 97) {
-                        outer ^= 1 << (p - 65);
-                      } else {
-                        outer ^= 1 << (p - 97);
-                      }
-                    }
-
-                    common = 0;
-                    center = centerLetter.text;
-                    int c = center.codeUnitAt(0);
-                    if (c < 97) {
-                      common |= 1 << (c - 65);
-                    } else {
-                      common |= 1 << (c - 97);
-                    }
-
-                    outer ^= common;
-
-                    results.clear();
-                    count.clear();
-
-                    await _loadData();
-
-                    setState(() {
-                      results.length;
-                    });
-                    _resultVisible = true;
-                  }
-                },
-                child: const Text('Solve'),
-              ),
-              TextButton(
-                style: TextButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  backgroundColor: Colors.blueGrey,
-                ),
-                onPressed: () async {
-                  centerLetter.text = "";
-                  outerLetters.text = "";
-                  _resultVisible = false;
-                  results.clear();
-                  count.clear();
-                  setState(() {});
-                },
-                child: const Text('Clear'),
-              )
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              const Text('Word Length'),
-              Radio(
-                value: 4,
-                groupValue: wordLimit,
-                onChanged: (val) {
-                  setState(() {
-                    wordLimit = val!;
-                  });
-                },
-              ),
-              const Text('4'),
-              Radio(
-                value: 5,
-                groupValue: wordLimit,
-                onChanged: (val) {
-                  setState(() {
-                    wordLimit = val!;
-                  });
-                },
-              ),
-              const Text('5')
-            ],
-          ),
-          const Divider(
-            height: 10,
-          ),
-          Visibility(
-            visible: _resultVisible,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+      body: Container(
+        color: Colors.blueGrey.shade200,
+        child: Column(
+          children: <Widget>[
+            const Divider(
+              height: 10,
+            ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
-                Text(
+                SizedBox(
+                  width: 150,
+                  height: 30,
+                  child: TextField(
+                    controller: outerLetters,
+                    textAlign: TextAlign.center,
+                    textAlignVertical: TextAlignVertical.center,
+                    maxLines: 1,
                     style: const TextStyle(
-                      fontSize: 20,
+                      fontSize: 25,
+                      color: Colors.deepOrangeAccent,
+                    ),
+                    decoration: InputDecoration(
+                        hintText: 'outer letters',
+                        hintStyle:
+                            const TextStyle(fontSize: 20, color: Colors.blue),
+                        enabledBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.indigoAccent, width: 2.0),
+                        ),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5.0)),
+                        contentPadding: const EdgeInsets.only(bottom: 15)),
+                  ),
+                ),
+                SizedBox(
+                  width: 70,
+                  height: 30,
+                  child: TextField(
+                    controller: centerLetter,
+                    textAlign: TextAlign.center,
+                    textAlignVertical: TextAlignVertical.center,
+                    maxLines: 1,
+                    style: const TextStyle(
+                      fontSize: 25,
                       color: Colors.green,
                     ),
-                    '${results.length} words score $score'),
+                    decoration: InputDecoration(
+                        hintText: 'center',
+                        hintStyle:
+                            const TextStyle(fontSize: 20, color: Colors.blue),
+                        isDense: true,
+                        enabledBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.indigoAccent, width: 2.0),
+                        ),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5.0)),
+                        contentPadding: const EdgeInsets.only(bottom: 15)),
+                  ),
+                ),
+                TextButton(
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: Colors.blueAccent,
+                  ),
+                  onPressed: () async {
+                    base = outerLetters.text;
+                    List<int> chars = base.codeUnits;
+                    if (chars.length == 6) {
+                      outer = ~0;
+                      for (int p in chars) {
+                        if (p < 97) {
+                          outer ^= 1 << (p - 65);
+                        } else {
+                          outer ^= 1 << (p - 97);
+                        }
+                      }
+
+                      common = 0;
+                      center = centerLetter.text;
+                      int c = center.codeUnitAt(0);
+                      if (c < 97) {
+                        common |= 1 << (c - 65);
+                      } else {
+                        common |= 1 << (c - 97);
+                      }
+
+                      outer ^= common;
+
+                      results.clear();
+                      count.clear();
+
+                      await _loadData();
+
+                      setState(() {
+                        results.length;
+                      });
+                      _resultVisible = true;
+                    }
+                  },
+                  child: const Text('Solve'),
+                ),
+                TextButton(
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: Colors.blueGrey,
+                  ),
+                  onPressed: () async {
+                    centerLetter.text = "";
+                    outerLetters.text = "";
+                    _resultVisible = false;
+                    results.clear();
+                    count.clear();
+                    setState(() {});
+                  },
+                  child: const Text('Clear'),
+                )
               ],
             ),
-          ),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                const Text('Word Length'),
+                Radio(
+                  value: 4,
+                  groupValue: wordLimit,
+                  onChanged: (val) {
+                    setState(() {
+                      wordLimit = val!;
+                    });
+                  },
+                ),
+                const Text('4'),
+                Radio(
+                  value: 5,
+                  groupValue: wordLimit,
+                  onChanged: (val) {
+                    setState(() {
+                      wordLimit = val!;
+                    });
+                  },
+                ),
+                const Text('5')
+              ],
+            ),
+            const Divider(
+              height: 10,
+            ),
+            Visibility(
+              visible: _resultVisible,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
-                  Visibility(
-                    visible: _resultVisible,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Container(
-                          width: 350,
-                          padding: const EdgeInsets.all(10.0),
-                          decoration: BoxDecoration(
-                            color: Colors.green[100],
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                              color: Colors.grey,
-                            ),
-                          ),
-                          child: GridView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 3,
-                              childAspectRatio: 5.0,
-                            ),
-                            itemCount: results.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              if (count[index] == 7) {
-                                return Text(
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.redAccent,
-                                    ),
-                                    results[index]);
-                              } else {
-                                return Text(
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.normal,
-                                      color: Colors.blueAccent,
-                                    ),
-                                    results[index]);
-                              }
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  Text(
+                      style: const TextStyle(
+                        fontSize: 20,
+                        color: Colors.green,
+                      ),
+                      '${results.length} words score $score'),
                 ],
               ),
             ),
-          ),
-          Visibility(
-            visible: _resultVisible,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                    style: const TextStyle(
-                      fontSize: 10,
-                      color: Colors.blue,
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: <Widget>[
+                    Visibility(
+                      visible: _resultVisible,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Container(
+                            width: 350,
+                            padding: const EdgeInsets.all(10.0),
+                            decoration: BoxDecoration(
+                              color: Colors.green[100],
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: Colors.grey,
+                              ),
+                            ),
+                            child: GridView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 3,
+                                childAspectRatio: 5.0,
+                              ),
+                              itemCount: results.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                if (count[index] == 7) {
+                                  return Text(
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.redAccent,
+                                      ),
+                                      results[index]);
+                                } else {
+                                  return Text(
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.normal,
+                                        color: Colors.blueAccent,
+                                      ),
+                                      results[index]);
+                                }
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    versionText),
-              ],
+                  ],
+                ),
+              ),
             ),
-          ),
-        ],
+            Visibility(
+              visible: _resultVisible,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                      style: const TextStyle(
+                        fontSize: 10,
+                        color: Colors.blue,
+                      ),
+                      versionText),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
