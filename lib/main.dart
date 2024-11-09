@@ -112,7 +112,7 @@ class _SpellFormState extends State<SpellForm> {
               children: <Widget>[
                 SizedBox(
                   width: 150,
-                  height: 30,
+                  height: 40,
                   child: TextField(
                     controller: outerLetters,
                     textAlign: TextAlign.center,
@@ -135,8 +135,8 @@ class _SpellFormState extends State<SpellForm> {
                   ),
                 ),
                 SizedBox(
-                  width: 70,
-                  height: 30,
+                  width: 75,
+                  height: 40,
                   child: TextField(
                     controller: centerLetter,
                     textAlign: TextAlign.center,
